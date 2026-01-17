@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Collection App</title>
+    <style>
+        /* ===== CSS Reset & Base Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-dark: #059669;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --warning: #f59e0b;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius: 0.5rem;
+            --radius-lg: 0.75rem;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ===== Layout ===== */
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+            min-height: 100vh;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            flex: 1;
+        }
+
+        .header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            flex: 1;
+        }
+
+        /* ===== Buttons ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--success-dark);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-dark);
+        }
+
+        .btn-secondary {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+        }
+
+        .btn-outline:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-400);
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8125rem;
+        }
+
+        .btn-lg {
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            border-radius: 50%;
+        }
+
+        .btn-back {
+            background: var(--gray-100);
+            color: var(--gray-600);
+            padding: 0.5rem;
+            border-radius: var(--radius);
+        }
+
+        .btn-back:hover {
+            background: var(--gray-200);
+        }
+
+        /* ===== Cards ===== */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-clickable {
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .card-clickable:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .card-clickable:active {
+            transform: translateY(0);
+        }
+
+        .project-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .project-icon {
+            width: 3rem;
+            height: 3rem;
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .project-info {
+            flex: 1;
+        }
+
+        .project-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .project-meta {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .project-arrow {
+            color: var(--gray-400);
+            font-size: 1.25rem;
+        }
+
+        /* ===== Forms ===== */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            font-size: 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            background: white;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-hint {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+            margin-top: 0.375rem;
+        }
+
+        /* ===== Toggle Switch ===== */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+        }
+
+        .toggle-label {
+            font-size: 0.9375rem;
+            color: var(--gray-700);
+        }
+
+        .toggle {
+            position: relative;
+            width: 3rem;
+            height: 1.625rem;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gray-300);
+            border-radius: 1rem;
+            transition: 0.2s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 1.25rem;
+            width: 1.25rem;
+            left: 0.1875rem;
+            bottom: 0.1875rem;
+            background: white;
+            border-radius: 50%;
+            transition: 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(1.375rem);
+        }
+
+        /* ===== Timer Display ===== */
+        .timer-display {
+            text-align: center;
+            padding: 2rem;
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+        }
+
+        .timer-value {
+            font-size: 3rem;
+            font-weight: 700;
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            color: var(--gray-900);
+            letter-spacing: -0.025em;
+        }
+
+        .timer-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-top: 0.5rem;
+        }
+
+        .timer-running .timer-value {
+            color: var(--success);
+        }
+
+        /* ===== Timer Buttons ===== */
+        .timer-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .timer-buttons .btn {
+            flex: 1;
+        }
+
+        /* ===== Data Display ===== */
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .data-value {
+            font-weight: 500;
+            color: var(--gray-900);
+        }
+
+        .data-value.success {
+            color: var(--success);
+        }
+
+        .data-value.warning {
+            color: var(--warning);
+        }
+
+        /* ===== Sample List ===== */
+        .sample-list {
+            margin-top: 1rem;
+        }
+
+        .sample-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .sample-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .sample-number {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .sample-date {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+        }
+
+        .sample-param {
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .sample-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+        }
+
+        .sample-detail {
+            color: var(--gray-600);
+        }
+
+        .sample-detail strong {
+            color: var(--gray-700);
+        }
+
+        .sample-actions {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        /* ===== Action Buttons Grid ===== */
+        .action-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-btn:active {
+            transform: scale(0.99);
+        }
+
+        .action-icon {
+            width: 3rem;
+            height: 3rem;
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .action-icon.success {
+            background: var(--success);
+        }
+
+        .action-text {
+            flex: 1;
+        }
+
+        .action-title {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .action-desc {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        /* ===== Info Box ===== */
+        .info-box {
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-box.success {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+        }
+
+        .info-box.warning {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-box-text {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        /* ===== Toast Notification ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--gray-900);
+            color: white;
+            padding: 0.875rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            font-size: 0.9375rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        /* ===== Tags Input ===== */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            background: white;
+            min-height: 2.75rem;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.625rem;
+            background: var(--primary-light);
+            color: white;
+            border-radius: 1rem;
+            font-size: 0.8125rem;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        .tag-remove:hover {
+            opacity: 1;
+        }
+
+        .tag-input {
+            flex: 1;
+            min-width: 100px;
+            border: none;
+            outline: none;
+            padding: 0.25rem;
+            font-size: 0.9375rem;
+        }
+
+        /* ===== Empty State ===== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray-500);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== Utility Classes ===== */
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .text-center { text-align: center; }
+        .text-sm { font-size: 0.875rem; }
+        .text-muted { color: var(--gray-500); }
+        .flex { display: flex; }
+        .gap-1 { gap: 0.5rem; }
+        .gap-2 { gap: 1rem; }
+
+        /* ===== Modal ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 100;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 480px) {
+            .app-container {
+                padding: 0.75rem;
+            }
+
+            .timer-value {
+                font-size: 2.5rem;
+            }
+
+            .sample-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ===== Home Screen ===== -->
+        <div id="screen-home" class="screen active">
+            <div class="header">
+                <h1>📊 Data Collection</h1>
+            </div>
+            
+            <div id="project-list">
+                <!-- Projects will be rendered here -->
+            </div>
+
+            <button class="btn btn-primary btn-block btn-lg mt-2" onclick="showScreen('create-project')">
+                ➕ Create New Project
+            </button>
+        </div>
+
+        <!-- ===== Create Project Screen ===== -->
+        <div id="screen-create-project" class="screen">
+            <div class="header">
+                <button class="btn-back" onclick="showScreen('home')">←</button>
+                <h2>Create Project</h2>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label class="form-label">Project Name</label>
+                    <input type="text" id="new-project-name" class="form-input" placeholder="e.g., Cake Baking Times">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Dropdown Options</label>
+                    <div id="dropdown-options-container" class="tags-container">
+                        <input type="text" id="dropdown-option-input" class="tag-input" placeholder="Type option and press Enter">
+                    </div>
+                    <p class="form-hint">Press Enter after each option (e.g., "Chocolate Cake")</p>
+                </div>
+
+                <div class="toggle-group">
+                    <span class="toggle-label">📍 Enable Location Tracking</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="new-project-location">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-group">
+                    <span class="toggle-label">🌤️ Enable Weather Data</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="new-project-weather">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="form-group mt-2">
+                    <label class="form-label">API Endpoints (Optional)</label>
+                    <div id="api-endpoints-container" class="tags-container">
+                        <input type="text" id="api-endpoint-input" class="tag-input" placeholder="Enter API URL and press Enter">
+                    </div>
+                    <p class="form-hint">Add custom API endpoints to fetch during data collection</p>
+                </div>
+
+                <button class="btn btn-success btn-block btn-lg mt-3" onclick="createProject()">
+                    ✓ Create Project
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== Project Detail Screen ===== -->
+        <div id="screen-project-detail" class="screen">
+            <div class="header">
+                <button class="btn-back" onclick="showScreen('home')">←</button>
+                <h2 id="project-detail-title">Project Name</h2>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-title" id="project-sample-count">0 samples collected</div>
+                <div class="info-box-text" id="project-features">Location: Off • Weather: Off</div>
+            </div>
+
+            <div class="action-grid">
+                <div class="action-btn" onclick="showScreen('collect-sample')">
+                    <div class="action-icon">📝</div>
+                    <div class="action-text">
+                        <div class="action-title">Collect New Sample</div>
+                        <div class="action-desc">Start timing and record data</div>
+                    </div>
+                    <span class="project-arrow">→</span>
+                </div>
+
+                <div class="action-btn" onclick="showScreen('view-samples')">
+                    <div class="action-icon success">📋</div>
+                    <div class="action-text">
+                        <div class="action-title">View Sample Data</div>
+                        <div class="action-desc">Browse and export collected data</div>
+                    </div>
+                    <span class="project-arrow">→</span>
+                </div>
+            </div>
+
+            <button class="btn btn-danger btn-block mt-3" onclick="confirmDeleteProject()">
+                🗑️ Delete Project
+            </button>
+        </div>
+
+        <!-- ===== Collect Sample Screen ===== -->
+        <div id="screen-collect-sample" class="screen">
+            <div class="header">
+                <button class="btn-back" onclick="showScreen('project-detail')">←</button>
+                <h2>Collect Sample</h2>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label class="form-label">Select Parameter</label>
+                    <select id="sample-parameter" class="form-select">
+                        <!-- Options populated dynamically -->
+                    </select>
+                </div>
+
+                <div class="timer-display" id="timer-display">
+                    <div class="timer-value" id="timer-value">00:00:00</div>
+                    <div class="timer-label" id="timer-label">Ready to start</div>
+                </div>
+
+                <div class="timer-buttons">
+                    <button class="btn btn-success btn-lg" id="btn-start" onclick="startTimer()">
+                        ▶ Start
+                    </button>
+                    <button class="btn btn-danger btn-lg" id="btn-stop" onclick="stopTimer()" disabled>
+                        ■ Stop
+                    </button>
+                </div>
+
+                <!-- Location Section (conditional) -->
+                <div id="location-section" style="display: none;">
+                    <div class="info-box">
+                        <div class="data-row">
+                            <span class="data-label">📍 Location</span>
+                            <span class="data-value" id="location-value">Not captured</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline btn-block mb-2" onclick="getLocation()">
+                        📍 Get Current Location
+                    </button>
+                </div>
+
+                <!-- Weather Section (conditional) -->
+                <div id="weather-section" style="display: none;">
+                    <div class="info-box">
+                        <div class="data-row">
+                            <span class="data-label">🌤️ Weather</span>
+                            <span class="data-value" id="weather-value">Not fetched</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">🌡️ Temperature</span>
+                            <span class="data-value" id="temp-value">--</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">💧 Humidity</span>
+                            <span class="data-value" id="humidity-value">--</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline btn-block mb-2" onclick="getWeather()">
+                        🌤️ Fetch Weather Data
+                    </button>
+                </div>
+
+                <!-- API Data Section (conditional) -->
+                <div id="api-section" style="display: none;">
+                    <div class="info-box" id="api-data-box">
+                        <div class="info-box-title">API Data</div>
+                        <div class="info-box-text" id="api-data-preview">No data fetched</div>
+                    </div>
+                    <button class="btn btn-outline btn-block mb-2" onclick="fetchApiData()">
+                        🔗 Fetch API Data
+                    </button>
+                </div>
+
+                <button class="btn btn-primary btn-block btn-lg mt-2" id="btn-save" onclick="saveSample()" disabled>
+                    💾 Save Sample
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== View Samples Screen ===== -->
+        <div id="screen-view-samples" class="screen">
+            <div class="header">
+                <button class="btn-back" onclick="showScreen('project-detail')">←</button>
+                <h2>Sample Data</h2>
+            </div>
+
+            <div class="flex gap-1 mb-2">
+                <button class="btn btn-primary" onclick="exportToCSV()">
+                    📥 Export CSV
+                </button>
+                <button class="btn btn-secondary" onclick="exportToJSON()">
+                    📥 Export JSON
+                </button>
+            </div>
+
+            <div id="samples-list" class="sample-list">
+                <!-- Samples will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Delete Confirmation Modal ===== -->
+    <div id="modal-delete" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-title">Delete Project?</div>
+            <p class="text-muted">This will permanently delete the project and all its samples. This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="deleteProject()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Toast Notification ===== -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // ===== Configuration =====
+        // Add your OpenWeatherMap API key here (get one free at https://openweathermap.org/api)
+        const WEATHER_API_KEY = ''; // Leave empty to use mock data
+
+        // ===== State Management =====
+        let state = {
+            currentProjectId: null,
+            timerInterval: null,
+            timerStartTime: null,
+            timerEndTime: null,
+            timerRunning: false,
+            elapsedSeconds: 0,
+            currentLocation: null,
+            currentWeather: null,
+            currentApiData: null,
+            dropdownOptions: [],
+            apiEndpoints: []
+        };
+
+        // ===== Data Storage =====
+        const STORAGE_KEY = 'data_collection_app';
+
+        /**
+         * Load data from localStorage
+         */
+        function loadData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                return JSON.parse(data);
+            }
+            // Initialize with example projects
+            return initializeDefaultData();
+        }
+
+        /**
+         * Save data to localStorage
+         */
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        /**
+         * Initialize default example projects
+         */
+        function initializeDefaultData() {
+            const defaultData = {
+                projects: [
+                    {
+                        id: generateId(),
+                        name: 'Cake Baking',
+                        options: ['Chocolate Cake', 'Vanilla Cake', 'Brownies', 'Orange Cake'],
+                        needs_location: false,
+                        needs_weather: true,
+                        api_endpoints: [],
+                        created_at: new Date().toISOString()
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Train/Walking Speed',
+                        options: ['Home to Station A', 'Station A to Office', 'Office to Station B'],
+                        needs_location: true,
+                        needs_weather: false,
+                        api_endpoints: [],
+                        created_at: new Date().toISOString()
+                    }
+                ],
+                samples: []
+            };
+            saveData(defaultData);
+            return defaultData;
+        }
+
+        /**
+         * Generate unique ID
+         */
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // ===== Screen Navigation =====
+        /**
+         * Show a specific screen
+         */
+        function showScreen(screenName) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Show target screen
+            const targetScreen = document.getElementById(`screen-${screenName}`);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+            }
+
+            // Screen-specific setup
+            switch (screenName) {
+                case 'home':
+                    renderProjectList();
+                    break;
+                case 'project-detail':
+                    renderProjectDetail();
+                    break;
+                case 'collect-sample':
+                    setupCollectSampleScreen();
+                    break;
+                case 'view-samples':
+                    renderSamplesList();
+                    break;
+                case 'create-project':
+                    resetCreateProjectForm();
+                    break;
+            }
+        }
+
+        // ===== Home Screen =====
+        /**
+         * Render the list of projects
+         */
+        function renderProjectList() {
+            const data = loadData();
+            const container = document.getElementById('project-list');
+
+            if (data.projects.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <div class="empty-text">No projects yet. Create your first project!</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = data.projects.map(project => {
+                const sampleCount = data.samples.filter(s => s.project_id === project.id).length;
+                const features = [];
+                if (project.needs_location) features.push('📍 Location');
+                if (project.needs_weather) features.push('🌤️ Weather');
+                const featureText = features.length ? features.join(' • ') : 'Basic timing';
+
+                return `
+                    <div class="card card-clickable project-card" onclick="openProject('${project.id}')">
+                        <div class="project-icon">📊</div>
+                        <div class="project-info">
+                            <div class="project-name">${escapeHtml(project.name)}</div>
+                            <div class="project-meta">${sampleCount} sample${sampleCount !== 1 ? 's' : ''} • ${featureText}</div>
+                        </div>
+                        <span class="project-arrow">→</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /**
+         * Open a project's detail screen
+         */
+        function openProject(projectId) {
+            state.currentProjectId = projectId;
+            showScreen('project-detail');
+        }
+
+        // ===== Project Detail Screen =====
+        /**
+         * Render project detail screen
+         */
+        function renderProjectDetail() {
+            const data = loadData();
+            const project = data.projects.find(p => p.id === state.currentProjectId);
+            
+            if (!project) {
+                showScreen('home');
+                return;
+            }
+
+            const sampleCount = data.samples.filter(s => s.project_id === project.id).length;
+            
+            document.getElementById('project-detail-title').textContent = project.name;
+            document.getElementById('project-sample-count').textContent = 
+                `${sampleCount} sample${sampleCount !== 1 ? 's' : ''} collected`;
+            
+            const features = [];
+            features.push(`Location: ${project.needs_location ? 'On' : 'Off'}`);
+            features.push(`Weather: ${project.needs_weather ? 'On' : 'Off'}`);
+            if (project.api_endpoints && project.api_endpoints.length > 0) {
+                features.push(`${project.api_endpoints.length} API endpoint${project.api_endpoints.length !== 1 ? 's' : ''}`);
+            }
+            document.getElementById('project-features').textContent = features.join(' • ');
+        }
+
+        // ===== Create Project Screen =====
+        /**
+         * Reset the create project form
+         */
+        function resetCreateProjectForm() {
+            document.getElementById('new-project-name').value = '';
+            document.getElementById('new-project-location').checked = false;
+            document.getElementById('new-project-weather').checked = false;
+            state.dropdownOptions = [];
+            state.apiEndpoints = [];
+            renderDropdownOptions();
+            renderApiEndpoints();
+        }
+
+        /**
+         * Setup tag input for dropdown options
+         */
+        function setupTagInputs() {
+            const optionInput = document.getElementById('dropdown-option-input');
+            optionInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = this.value.trim();
+                    if (value && !state.dropdownOptions.includes(value)) {
+                        state.dropdownOptions.push(value);
+                        renderDropdownOptions();
+                        this.value = '';
+                    }
+                }
+            });
+
+            const apiInput = document.getElementById('api-endpoint-input');
+            apiInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = this.value.trim();
+                    if (value && !state.apiEndpoints.includes(value)) {
+                        state.apiEndpoints.push(value);
+                        renderApiEndpoints();
+                        this.value = '';
+                    }
+                }
+            });
+        }
+
+        /**
+         * Render dropdown options tags
+         */
+        function renderDropdownOptions() {
+            const container = document.getElementById('dropdown-options-container');
+            const input = document.getElementById('dropdown-option-input');
+            
+            container.innerHTML = state.dropdownOptions.map((option, index) => `
+                <span class="tag">
+                    ${escapeHtml(option)}
+                    <span class="tag-remove" onclick="removeDropdownOption(${index})">×</span>
+                </span>
+            `).join('');
+            
+            container.appendChild(input);
+        }
+
+        /**
+         * Remove a dropdown option
+         */
+        function removeDropdownOption(index) {
+            state.dropdownOptions.splice(index, 1);
+            renderDropdownOptions();
+        }
+
+        /**
+         * Render API endpoints tags
+         */
+        function renderApiEndpoints() {
+            const container = document.getElementById('api-endpoints-container');
+            const input = document.getElementById('api-endpoint-input');
+            
+            container.innerHTML = state.apiEndpoints.map((endpoint, index) => `
+                <span class="tag">
+                    ${escapeHtml(endpoint.substring(0, 30))}${endpoint.length > 30 ? '...' : ''}
+                    <span class="tag-remove" onclick="removeApiEndpoint(${index})">×</span>
+                </span>
+            `).join('');
+            
+            container.appendChild(input);
+        }
+
+        /**
+         * Remove an API endpoint
+         */
+        function removeApiEndpoint(index) {
+            state.apiEndpoints.splice(index, 1);
+            renderApiEndpoints();
+        }
+
+        /**
+         * Create a new project
+         */
+        function createProject() {
+            const name = document.getElementById('new-project-name').value.trim();
+            const needsLocation = document.getElementById('new-project-location').checked;
+            const needsWeather = document.getElementById('new-project-weather').checked;
+
+            if (!name) {
+                showToast('Please enter a project name', 'error');
+                return;
+            }
+
+            if (state.dropdownOptions.length === 0) {
+                showToast('Please add at least one dropdown option', 'error');
+                return;
+            }
+
+            const data = loadData();
+            const newProject = {
+                id: generateId(),
+                name: name,
+                options: [...state.dropdownOptions],
+                needs_location: needsLocation,
+                needs_weather: needsWeather,
+                api_endpoints: [...state.apiEndpoints],
+                created_at: new Date().toISOString()
+            };
+
+            data.projects.push(newProject);
+            saveData(data);
+
+            showToast('Project created successfully!', 'success');
+            state.currentProjectId = newProject.id;
+            showScreen('project-detail');
+        }
+
+        // ===== Collect Sample Screen =====
+        /**
+         * Setup the collect sample screen
+         */
+        function setupCollectSampleScreen() {
+            const data = loadData();
+            const project = data.projects.find(p => p.id === state.currentProjectId);
+            
+            if (!project) {
+                showScreen('home');
+                return;
+            }
+
+            // Reset timer state
+            resetTimer();
+
+            // Populate parameter dropdown
+            const paramSelect = document.getElementById('sample-parameter');
+            paramSelect.innerHTML = project.options.map(option => 
+                `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`
+            ).join('');
+
+            // Show/hide location section
+            const locationSection = document.getElementById('location-section');
+            locationSection.style.display = project.needs_location ? 'block' : 'none';
+            document.getElementById('location-value').textContent = 'Not captured';
+            state.currentLocation = null;
+
+            // Show/hide weather section
+            const weatherSection = document.getElementById('weather-section');
+            weatherSection.style.display = project.needs_weather ? 'block' : 'none';
+            document.getElementById('weather-value').textContent = 'Not fetched';
+            document.getElementById('temp-value').textContent = '--';
+            document.getElementById('humidity-value').textContent = '--';
+            state.currentWeather = null;
+
+            // Show/hide API section
+            const apiSection = document.getElementById('api-section');
+            apiSection.style.display = project.api_endpoints && project.api_endpoints.length > 0 ? 'block' : 'none';
+            document.getElementById('api-data-preview').textContent = 'No data fetched';
+            state.currentApiData = null;
+
+            // Reset buttons
+            document.getElementById('btn-start').disabled = false;
+            document.getElementById('btn-stop').disabled = true;
+            document.getElementById('btn-save').disabled = true;
+        }
+
+        // ===== Timer Functions =====
+        /**
+         * Reset the timer
+         */
+        function resetTimer() {
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+            }
+            state.timerInterval = null;
+            state.timerStartTime = null;
+            state.timerEndTime = null;
+            state.timerRunning = false;
+            state.elapsedSeconds = 0;
+            
+            document.getElementById('timer-value').textContent = '00:00:00';
+            document.getElementById('timer-label').textContent = 'Ready to start';
+            document.getElementById('timer-display').classList.remove('timer-running');
+        }
+
+        /**
+         * Start the timer
+         */
+        function startTimer() {
+            state.timerStartTime = new Date();
+            state.timerRunning = true;
+            state.elapsedSeconds = 0;
+
+            document.getElementById('btn-start').disabled = true;
+            document.getElementById('btn-stop').disabled = false;
+            document.getElementById('timer-display').classList.add('timer-running');
+            document.getElementById('timer-label').textContent = 'Timer running...';
+
+            state.timerInterval = setInterval(updateTimerDisplay, 100);
+        }
+
+        /**
+         * Stop the timer
+         */
+        function stopTimer() {
+            if (!state.timerRunning) return;
+
+            state.timerEndTime = new Date();
+            state.timerRunning = false;
+            clearInterval(state.timerInterval);
+
+            document.getElementById('btn-start').disabled = true;
+            document.getElementById('btn-stop').disabled = true;
+            document.getElementById('btn-save').disabled = false;
+            document.getElementById('timer-display').classList.remove('timer-running');
+            document.getElementById('timer-label').textContent = 'Timer stopped - Ready to save';
+        }
+
+        /**
+         * Update the timer display
+         */
+        function updateTimerDisplay() {
+            const now = new Date();
+            const elapsed = Math.floor((now - state.timerStartTime) / 1000);
+            state.elapsedSeconds = elapsed;
+
+            const hours = Math.floor(elapsed / 3600);
+            const minutes = Math.floor((elapsed % 3600) / 60);
+            const seconds = elapsed % 60;
+
+            document.getElementById('timer-value').textContent = 
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        /**
+         * Format duration from seconds
+         */
+        function formatDuration(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+
+            if (hours > 0) {
+                return `${hours}h ${minutes}m ${secs}s`;
+            } else if (minutes > 0) {
+                return `${minutes}m ${secs}s`;
+            } else {
+                return `${secs}s`;
+            }
+        }
+
+        // ===== Location Functions =====
+        /**
+         * Get current location
+         */
+        function getLocation() {
+            if (!navigator.geolocation) {
+                showToast('Geolocation is not supported by your browser', 'error');
+                return;
+            }
+
+            document.getElementById('location-value').textContent = 'Getting location...';
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    state.currentLocation = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                        timestamp: new Date().toISOString()
+                    };
+                    document.getElementById('location-value').textContent = 
+                        `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
+                    document.getElementById('location-value').classList.add('success');
+                    showToast('Location captured!', 'success');
+                },
+                (error) => {
+                    let message = 'Unable to get location';
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            message = 'Location permission denied';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message = 'Location unavailable';
+                            break;
+                        case error.TIMEOUT:
+                            message = 'Location request timed out';
+                            break;
+                    }
+                    document.getElementById('location-value').textContent = message;
+                    showToast(message, 'error');
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        // ===== Weather Functions =====
+        /**
+         * Get weather data
+         */
+        async function getWeather() {
+            document.getElementById('weather-value').textContent = 'Fetching...';
+
+            // Check if we have an API key
+            if (!WEATHER_API_KEY) {
+                // Use mock data if no API key
+                useMockWeatherData();
+                return;
+            }
+
+            // Try to get location first for accurate weather
+            if (state.currentLocation) {
+                await fetchWeatherByCoords(state.currentLocation.latitude, state.currentLocation.longitude);
+            } else if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        await fetchWeatherByCoords(position.coords.latitude, position.coords.longitude);
+                    },
+                    () => {
+                        // Fallback to default location
+                        fetchWeatherByCity('London');
+                    }
+                );
+            } else {
+                fetchWeatherByCity('London');
+            }
+        }
+
+        /**
+         * Fetch weather by coordinates
+         * @param {number} lat - Latitude
+         * @param {number} lon - Longitude
+         */
+        async function fetchWeatherByCoords(lat, lon) {
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`
+                );
+                const data = await response.json();
+                handleWeatherResponse(data);
+            } catch (error) {
+                console.error('Weather API error:', error);
+                useMockWeatherData();
+            }
+        }
+
+        /**
+         * Fetch weather by city name
+         * @param {string} city - City name
+         */
+        async function fetchWeatherByCity(city) {
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}&units=metric`
+                );
+                const data = await response.json();
+                handleWeatherResponse(data);
+            } catch (error) {
+                console.error('Weather API error:', error);
+                useMockWeatherData();
+            }
+        }
+
+        /**
+         * Handle weather API response
+         * @param {Object} data - Weather API response
+         */
+        function handleWeatherResponse(data) {
+            if (data.cod === 200) {
+                state.currentWeather = {
+                    condition: data.weather[0].main,
+                    description: data.weather[0].description,
+                    temperature: data.main.temp,
+                    humidity: data.main.humidity,
+                    pressure: data.main.pressure,
+                    wind_speed: data.wind.speed,
+                    location: data.name,
+                    timestamp: new Date().toISOString()
+                };
+                updateWeatherDisplay();
+                showToast('Weather data fetched!', 'success');
+            } else {
+                useMockWeatherData();
+            }
+        }
+
+        /**
+         * Use mock weather data when API is unavailable
+         */
+        function useMockWeatherData() {
+            const conditions = ['Sunny', 'Cloudy', 'Partly Cloudy', 'Rainy', 'Clear'];
+            const randomCondition = conditions[Math.floor(Math.random() * conditions.length)];
+            const randomTemp = (15 + Math.random() * 15).toFixed(1);
+            const randomHumidity = Math.floor(40 + Math.random() * 40);
+
+            state.currentWeather = {
+                condition: randomCondition,
+                description: randomCondition.toLowerCase(),
+                temperature: parseFloat(randomTemp),
+                humidity: randomHumidity,
+                pressure: 1013,
+                wind_speed: (Math.random() * 10).toFixed(1),
+                location: 'Mock Location',
+                timestamp: new Date().toISOString(),
+                is_mock: true
+            };
+            updateWeatherDisplay();
+            showToast('Using simulated weather data (no API key)', 'warning');
+        }
+
+        /**
+         * Update weather display
+         */
+        function updateWeatherDisplay() {
+            if (state.currentWeather) {
+                document.getElementById('weather-value').textContent = 
+                    `${state.currentWeather.condition}${state.currentWeather.is_mock ? ' (Mock)' : ''}`;
+                document.getElementById('temp-value').textContent = 
+                    `${state.currentWeather.temperature}°C`;
+                document.getElementById('humidity-value').textContent = 
+                    `${state.currentWeather.humidity}%`;
+                document.getElementById('weather-value').classList.add('success');
+            }
+        }
+
+        // ===== API Data Functions =====
+        /**
+         * Fetch data from configured API endpoints
+         */
+        async function fetchApiData() {
+            const data = loadData();
+            const project = data.projects.find(p => p.id === state.currentProjectId);
+            
+            if (!project || !project.api_endpoints || project.api_endpoints.length === 0) {
+                showToast('No API endpoints configured', 'error');
+                return;
+            }
+
+            document.getElementById('api-data-preview').textContent = 'Fetching...';
+            state.currentApiData = {};
+
+            for (const endpoint of project.api_endpoints) {
+                try {
+                    // Note: Most external APIs will fail due to CORS unless properly configured
+                    const response = await fetch(endpoint);
+                    const apiData = await response.json();
+                    state.currentApiData[endpoint] = {
+                        success: true,
+                        data: apiData,
+                        timestamp: new Date().toISOString()
+                    };
+                } catch (error) {
+                    console.error(`API fetch error for ${endpoint}:`, error);
+                    state.currentApiData[endpoint] = {
+                        success: false,
+                        error: error.message,
+                        timestamp: new Date().toISOString()
+                    };
+                }
+            }
+
+            const successCount = Object.values(state.currentApiData).filter(d => d.success).length;
+            document.getElementById('api-data-preview').textContent = 
+                `${successCount}/${project.api_endpoints.length} endpoints fetched`;
+            
+            if (successCount > 0) {
+                showToast('API data fetched!', 'success');
+            } else {
+                showToast('API fetch failed (CORS or network issue)', 'error');
+            }
+        }
+
+        // ===== Save Sample =====
+        /**
+         * Save the current sample
+         */
+        function saveSample() {
+            if (!state.timerEndTime) {
+                showToast('Please start and stop the timer first', 'error');
+                return;
+            }
+
+            const parameter = document.getElementById('sample-parameter').value;
+            const duration = Math.floor((state.timerEndTime - state.timerStartTime) / 1000);
+
+            const sample = {
+                id: generateId(),
+                project_id: state.currentProjectId,
+                parameter: parameter,
+                start_time: state.timerStartTime.toISOString(),
+                end_time: state.timerEndTime.toISOString(),
+                duration_seconds: duration,
+                location: state.currentLocation,
+                weather: state.currentWeather,
+                api_data: state.currentApiData,
+                created_at: new Date().toISOString()
+            };
+
+            const data = loadData();
+            data.samples.push(sample);
+            saveData(data);
+
+            showToast('Sample saved successfully!', 'success');
+            
+            // Reset for next sample
+            setupCollectSampleScreen();
+        }
+
+        // ===== View Samples Screen =====
+        /**
+         * Render the samples list
+         */
+        function renderSamplesList() {
+            const data = loadData();
+            const project = data.projects.find(p => p.id === state.currentProjectId);
+            const samples = data.samples
+                .filter(s => s.project_id === state.currentProjectId)
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            const container = document.getElementById('samples-list');
+
+            if (samples.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-text">No samples collected yet.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = samples.map((sample, index) => {
+                const sampleNumber = samples.length - index;
+                const date = new Date(sample.created_at);
+                const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+
+                let detailsHtml = `
+                    <div class="sample-detail"><strong>Duration:</strong> ${formatDuration(sample.duration_seconds)}</div>
+                `;
+
+                if (sample.location) {
+                    detailsHtml += `
+                        <div class="sample-detail"><strong>Location:</strong> ${sample.location.latitude.toFixed(4)}, ${sample.location.longitude.toFixed(4)}</div>
+                    `;
+                }
+
+                if (sample.weather) {
+                    detailsHtml += `
+                        <div class="sample-detail"><strong>Weather:</strong> ${sample.weather.condition}, ${sample.weather.temperature}°C</div>
+                    `;
+                }
+
+                if (sample.api_data) {
+                    const endpoints = Object.keys(sample.api_data).length;
+                    detailsHtml += `
+                        <div class="sample-detail"><strong>API Data:</strong> ${endpoints} endpoint(s)</div>
+                    `;
+                }
+
+                return `
+                    <div class="sample-card">
+                        <div class="sample-header">
+                            <span class="sample-number">Sample #${sampleNumber}</span>
+                            <span class="sample-date">${dateStr}</span>
+                        </div>
+                        <div class="sample-param">${escapeHtml(sample.parameter)}</div>
+                        <div class="sample-details">
+                            ${detailsHtml}
+                        </div>
+                        <div class="sample-actions">
+                            <button class="btn btn-danger btn-sm" onclick="deleteSample('${sample.id}')">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /**
+         * Delete a sample
+         * @param {string} sampleId - Sample ID to delete
+         */
+        function deleteSample(sampleId) {
+            if (!confirm('Are you sure you want to delete this sample?')) {
+                return;
+            }
+
+            const data = loadData();
+            data.samples = data.samples.filter(s => s.id !== sampleId);
+            saveData(data);
+
+            showToast('Sample deleted', 'success');
+            renderSamplesList();
+        }
+
+        // ===== Export Functions =====
+        /**
+         * Export samples to CSV
+         */
+        function exportToCSV() {
+            const data = loadData();
+            const project = data.projects.find(p => p.id === state.currentProjectId);
+            const samples = data.samples.filter(s => s.project_id === state.currentProjectId);
+
+            if (samples.length === 0) {
+                showToast('No samples to export', 'error');
+                return;
+            }
+
+            // Build CSV headers
+            let headers = ['Sample #', 'Parameter', 'Start Time', 'End Time', 'Duration (seconds)', 'Duration (formatted)', 'Date'];
+            
+            if (project.needs_location) {
+                headers.push('Latitude', 'Longitude', 'Location Accuracy');
+            }
+            
+            if (project.needs_weather) {
+                headers.push('Weather', 'Temperature (°C)', 'Humidity (%)');
+            }
+
+            // Build CSV rows
+            const rows = samples.map((sample, index) => {
+                let row = [
+                    index + 1,
+                    `"${sample.parameter}"`,
+                    sample.start_time,
+                    sample.end_time,
+                    sample.duration_seconds,
+                    formatDuration(sample.duration_seconds),
+                    new Date(sample.created_at).toLocaleDateString()
+                ];
+
+                if (project.needs_location) {
+                    if (sample.location) {
+                        row.push(sample.location.latitude, sample.location.longitude, sample.location.accuracy);
+                    } else {
+                        row.push('', '', '');
+                    }
+                }
+
+                if (project.needs_weather) {
+                    if (sample.weather) {
+                        row.push(sample.weather.condition, sample.weather.temperature, sample.weather.humidity);
+                    } else {
+                        row.push('', '', '');
+                    }
+                }
+
+                return row.join(',');
+            });
+
+            const csv = [headers.join(','), ...rows].join('\n');
+            downloadFile(csv, `${project.name.replace(/\s+/g, '_')}_samples.csv`, 'text/csv');
+            showToast('CSV exported!', 'success');
+        }
+
+        /**
+         * Export samples to JSON
+         */
+        function exportToJSON() {
+            const data = loadData();
+            const project = data.projects.find(p => p.id === state.currentProjectId);
+            const samples = data.samples.filter(s => s.project_id === state.currentProjectId);
+
+            if (samples.length === 0) {
+                showToast('No samples to export', 'error');
+                return;
+            }
+
+            const exportData = {
+                project: {
+                    name: project.name,
+                    options: project.options,
+                    needs_location: project.needs_location,
+                    needs_weather: project.needs_weather,
+                    api_endpoints: project.api_endpoints
+                },
+                samples: samples,
+                exported_at: new Date().toISOString()
+            };
+
+            const json = JSON.stringify(exportData, null, 2);
+            downloadFile(json, `${project.name.replace(/\s+/g, '_')}_samples.json`, 'application/json');
+            showToast('JSON exported!', 'success');
+        }
+
+        /**
+         * Download a file
+         * @param {string} content - File content
+         * @param {string} filename - File name
+         * @param {string} contentType - MIME type
+         */
+        function downloadFile(content, filename, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ===== Delete Project =====
+        /**
+         * Show delete confirmation modal
+         */
+        function confirmDeleteProject() {
+            document.getElementById('modal-delete').classList.add('show');
+        }
+
+        /**
+         * Close modal
+         */
+        function closeModal() {
+            document.getElementById('modal-delete').classList.remove('show');
+        }
+
+        /**
+         * Delete the current project
+         */
+        function deleteProject() {
+            const data = loadData();
+            data.projects = data.projects.filter(p => p.id !== state.currentProjectId);
+            data.samples = data.samples.filter(s => s.project_id !== state.currentProjectId);
+            saveData(data);
+
+            closeModal();
+            showToast('Project deleted', 'success');
+            state.currentProjectId = null;
+            showScreen('home');
+        }
+
+        // ===== Utility Functions =====
+        /**
+         * Show toast notification
+         * @param {string} message - Toast message
+         * @param {string} type - Toast type (success, error, warning)
+         */
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        /**
+         * Escape HTML to prevent XSS
+         * @param {string} text - Text to escape
+         * @returns {string} Escaped text
+         */
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ===== Initialize App =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial data (creates defaults if needed)
+            loadData();
+            
+            // Setup tag inputs
+            setupTagInputs();
+            
+            // Render home screen
+            renderProjectList();
+
+            // Close modal on overlay click
+            document.getElementById('modal-delete').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
